@@ -20,7 +20,7 @@ class Build : NukeBuild
     public static Int32 Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    readonly Configuration Configuration = Configuration.Release;
 
     [Parameter("Explicit framework to build")] readonly String Framework;
     [Parameter("NuGet API Key")] readonly String NuGetApiKey;
