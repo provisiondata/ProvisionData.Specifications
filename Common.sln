@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EntityFramework", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{9CC16728-99AC-4872-B857-0F220E5AB988}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.UnitTesting", "src\Common.UnitTesting\Common.UnitTesting.csproj", "{7C5ECF2E-C4C4-4687-8CAB-BB1ADAFBA07E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{E117449E-1487-4E4D-90AE-449A06425176}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9CC16728-99AC-4872-B857-0F220E5AB988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CC16728-99AC-4872-B857-0F220E5AB988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C5ECF2E-C4C4-4687-8CAB-BB1ADAFBA07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C5ECF2E-C4C4-4687-8CAB-BB1ADAFBA07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C5ECF2E-C4C4-4687-8CAB-BB1ADAFBA07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C5ECF2E-C4C4-4687-8CAB-BB1ADAFBA07E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
