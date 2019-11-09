@@ -1,0 +1,10 @@
+﻿[*.cs]
+
+# IDE0066: Convert switch statement to expression
+csharp_style_prefer_switch_expression = false:suggestion
+
+# RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1124.severity = suggestion
+
+# IDE0011: Add braces
+csharp_prefer_braces = when_multiline:suggestion
