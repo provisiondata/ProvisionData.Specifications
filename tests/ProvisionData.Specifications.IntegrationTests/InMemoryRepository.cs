@@ -64,7 +64,7 @@ namespace ProvisionData.Specifications.Internal
 
         public Task<User> GetAsync(Guid id) => Task.FromResult(_users[id]);
 
-        public Task<IReadOnlyList<User>> ListAsync(ISpecification<User> specification = null)
+        public Task<IReadOnlyList<User>> ListAsync(IQueryableSpecification<User> specification = null)
         {
             if (specification is null)
             {

@@ -33,6 +33,10 @@ namespace ProvisionData.Specifications
     public interface ISpecification<T>
     {
         Boolean IsSatisfiedBy(T entity);
+    }
+
+    public interface IQueryableSpecification<T> : ISpecification<T>
+    {
         Expression<Func<T, Boolean>> SpecificationExpression { get; }
     }
 }

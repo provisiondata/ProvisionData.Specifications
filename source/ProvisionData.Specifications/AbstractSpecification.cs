@@ -31,7 +31,7 @@ namespace ProvisionData.Specifications
     using System.Linq;
     using System.Linq.Expressions;
 
-    public abstract class AbstractSpecification<TDomainModel> : ISpecification<TDomainModel>
+    public abstract class AbstractSpecification<TDomainModel> : IQueryableSpecification<TDomainModel>
     {
         private Func<TDomainModel, Boolean> _isSatisfiedBy;
 

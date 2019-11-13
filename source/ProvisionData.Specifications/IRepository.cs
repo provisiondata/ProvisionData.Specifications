@@ -31,7 +31,7 @@ namespace ProvisionData.Specifications.Internal
 
     public interface IRepository<TDomainModel> : IDisposable
     {
-        Task<IReadOnlyList<TDomainModel>> ListAsync(ISpecification<TDomainModel> specification = null);
+        Task<IReadOnlyList<TDomainModel>> ListAsync(IQueryableSpecification<TDomainModel> specification = null);
 
         //Task<TDomainModel> GetAsync(Guid id);
 

@@ -50,7 +50,7 @@ namespace ProvisionData.Specifications.Internal
             }
         }
 
-        public async Task<IReadOnlyList<User>> ListAsync(ISpecification<User> specification = null)
+        public async Task<IReadOnlyList<User>> ListAsync(IQueryableSpecification<User> specification = null)
         {
             using (var ctx = new EntityFrameworkContext(_options))
             {
