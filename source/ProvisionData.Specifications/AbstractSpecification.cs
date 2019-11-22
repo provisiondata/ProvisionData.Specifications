@@ -26,8 +26,6 @@
 namespace ProvisionData.Specifications
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
 
@@ -35,18 +33,18 @@ namespace ProvisionData.Specifications
     {
         private Func<TDomainModel, Boolean> _isSatisfiedBy;
 
-        public abstract Expression<Func<TDomainModel, Boolean>> SpecificationExpression { get; }
+        public abstract Expression<Func<TDomainModel, Boolean>> Predicate { get; }
 
         public Boolean IsSatisfiedBy(TDomainModel entity)
         {
             if (_isSatisfiedBy is null)
-                _isSatisfiedBy = SpecificationExpression.Compile();
+                _isSatisfiedBy = Predicate.Compile();
 
             return _isSatisfiedBy(entity);
         }
 
         public static implicit operator Expression<Func<TDomainModel, Boolean>>(AbstractSpecification<TDomainModel> spec)
-            => spec.SpecificationExpression;
+            => spec.Predicate;
 
         public static AbstractSpecification<TDomainModel> operator &(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right)
             => CombineSpecification(left, right, Expression.AndAlso);
@@ -56,17 +54,15 @@ namespace ProvisionData.Specifications
 
         public static AbstractSpecification<TDomainModel> operator !(AbstractSpecification<TDomainModel> spec)
         {
-            Expression<Func<TDomainModel, Boolean>> inverted = model => !spec.IsSatisfiedBy(model);
-            var param = Expression.Parameter(typeof(TDomainModel));
-            var expr = new ReplaceParameterVisitor { { inverted.Parameters.Single(), param } }.Visit(inverted.Body);
-            var lambda = Expression.Lambda<Func<TDomainModel, Boolean>>(expr, param);
-            return new ConstructedSpecification<TDomainModel>(lambda);
+            var predicate = spec.Predicate;
+            var newExpr = Expression.Lambda<Func<TDomainModel, Boolean>>(Expression.Not(predicate.Body), predicate.Parameters[0]);
+            return new ConstructedSpecification<TDomainModel>(newExpr);
         }
 
         protected static AbstractSpecification<TDomainModel> CombineSpecification(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right, Func<Expression, Expression, BinaryExpression> combiner)
         {
-            var lExpr = left.SpecificationExpression;
-            var rExpr = right.SpecificationExpression;
+            var lExpr = left.Predicate;
+            var rExpr = right.Predicate;
             var param = Expression.Parameter(typeof(TDomainModel));
             var combined = combiner.Invoke(
                     new ReplaceParameterVisitor { { lExpr.Parameters.Single(), param } }.Visit(lExpr.Body),
@@ -84,28 +80,7 @@ namespace ProvisionData.Specifications
                 _expr = specificationExpression;
             }
 
-            public override Expression<Func<T, Boolean>> SpecificationExpression => _expr;
+            public override Expression<Func<T, Boolean>> Predicate => _expr;
         }
-    }
-
-    internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
-    {
-        private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new Dictionary<ParameterExpression, ParameterExpression>();
-
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            if (_map.TryGetValue(node, out var newValue))
-                return newValue;
-
-            return node;
-        }
-
-        public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
-            => _map.Add(parameterToReplace, replaceWith);
-
-        public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
-            => _map.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

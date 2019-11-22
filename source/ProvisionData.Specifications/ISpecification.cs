@@ -37,6 +37,6 @@ namespace ProvisionData.Specifications
 
     public interface IQueryableSpecification<T> : ISpecification<T>
     {
-        Expression<Func<T, Boolean>> SpecificationExpression { get; }
+        Expression<Func<T, Boolean>> Predicate { get; }
     }
 }

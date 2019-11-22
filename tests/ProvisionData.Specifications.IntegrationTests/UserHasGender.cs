@@ -34,7 +34,7 @@ namespace ProvisionData.Specifications.Internal
 
         public Gender Gender { get; }
 
-        public override Expression<Func<User, Boolean>> SpecificationExpression
+        public override Expression<Func<User, Boolean>> Predicate
             => user => (Gender & user.Gender) != 0;
     }
 }

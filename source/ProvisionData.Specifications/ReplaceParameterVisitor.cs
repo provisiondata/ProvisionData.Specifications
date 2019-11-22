@@ -23,23 +23,30 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications.Internal
+namespace ProvisionData.Specifications
 {
-    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
 
-    public class UserIsAgeOfMajority : AbstractSpecification<User>
+    internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
     {
-        public UserIsAgeOfMajority(Int32 ageOfMajority)
-            : this(DateTime.UtcNow.Date.AddYears(0 - ageOfMajority))
+        private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new Dictionary<ParameterExpression, ParameterExpression>();
+
+        protected override Expression VisitParameter(ParameterExpression node)
         {
+            if (_map.TryGetValue(node, out var newValue))
+                return newValue;
+
+            return node;
         }
 
-        public UserIsAgeOfMajority(DateTime dateTime) => DateTime = dateTime;
+        public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
+            => _map.Add(parameterToReplace, replaceWith);
 
-        public DateTime DateTime { get; }
+        public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
+            => _map.GetEnumerator();
 
-        public override Expression<Func<User, Boolean>> Predicate
-            => user => user.DateOfBirth <= DateTime;
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
