@@ -57,7 +57,7 @@ namespace ProvisionData.Specifications.Internal
                 var query = ctx.Users as IQueryable<User>;
                 if (specification != null)
                 {
-                    query = query.Where(specification.SpecificationExpression);
+                    query = query.Where(specification.Predicate);
                 }
                 return await query.ToListAsync().ConfigureAwait(false);
             }
