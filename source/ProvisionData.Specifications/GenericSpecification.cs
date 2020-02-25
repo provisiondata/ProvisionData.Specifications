@@ -26,7 +26,6 @@
 namespace ProvisionData.Specifications
 {
     using System;
-    using System.Linq;
     using System.Linq.Expressions;
 
     public class GenericSpecification<T>
@@ -39,8 +38,6 @@ namespace ProvisionData.Specifications
         }
 
         public Boolean IsSatisfiedBy(T entity)
-        {
-            return Expression.Compile().Invoke(entity);
-        }
+            => Expression.Compile().Invoke(entity);
     }
 }
