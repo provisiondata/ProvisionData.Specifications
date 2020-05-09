@@ -37,6 +37,7 @@ namespace ProvisionData.UnitTests.Extensions
         [InlineData("<p>Hello<br />World!</p>", "Hello\r\nWorld!")]
         [InlineData("<ul><li>Hello, World!</li></ul>", "* Hello, World!")]
         [InlineData("<ol><li>Hello, World!</li></ol>", "1. Hello, World!")]
+        [InlineData("<ol><li>Hello, World!</li><li>Goodbye, World!</li></ol>", "1. Hello, World!\r\n2. Goodbye, World!")]
         public void Test(String input, String expected)
         {
             input.HtmlToText().Should().Be(expected);

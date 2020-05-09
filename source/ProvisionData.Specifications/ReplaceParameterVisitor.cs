@@ -34,12 +34,7 @@ namespace ProvisionData.Specifications
         private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new Dictionary<ParameterExpression, ParameterExpression>();
 
         protected override Expression VisitParameter(ParameterExpression node)
-        {
-            if (_map.TryGetValue(node, out var newValue))
-                return newValue;
-
-            return node;
-        }
+            => _map.TryGetValue(node, out var newValue) ? newValue : node;
 
         public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
             => _map.Add(parameterToReplace, replaceWith);

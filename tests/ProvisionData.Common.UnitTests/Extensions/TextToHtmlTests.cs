@@ -23,23 +23,23 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications.Internal
+namespace ProvisionData.UnitTests.Extensions
 {
+    using FluentAssertions;
+    using ProvisionData.Extensions;
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using Xunit;
 
-    public interface IRepository<TDomainModel> : IDisposable
-        where TDomainModel : class
+    public class TextToHtmlTests
     {
-        Task<IReadOnlyList<TDomainModel>> ListAsync(IQueryableSpecification<TDomainModel>? specification = null);
+        private const String CR = "\r\n";
 
-        //Task<TDomainModel> GetAsync(Guid id);
-
-        //Task AddAsync(TDomainModel domainModel);
-
-        //Task UpdateAsync(TDomainModel domainModel);
-
-        //Task DeleteAsync(TDomainModel domainModel);
+        [Theory]
+        [InlineData("Hello, World!", "<p>Hello, World!</p>")]
+        [InlineData("Hello" + CR + "World!", "<p>Hello</p>" + CR + "<p>World!</p>")]
+        public void Test(String input, String expected)
+        {
+            input.ToHtmlParagraphs().Should().Be(expected);
+        }
     }
 }

@@ -23,23 +23,50 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications.Internal
+namespace ProvisionData.Specifications.EntityFrameworkCore
 {
+    using Microsoft.EntityFrameworkCore;
+    using ProvisionData.Specifications;
+    using ProvisionData.Specifications.Internal;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
-    public interface IRepository<TDomainModel> : IDisposable
-        where TDomainModel : class
+    public class DbContextRepository<TEntity, TContext> : IRepository<TEntity>
+        where TEntity : class
+        where TContext : DbContext
     {
-        Task<IReadOnlyList<TDomainModel>> ListAsync(IQueryableSpecification<TDomainModel>? specification = null);
+        private readonly TContext _dbContext;
+        private Boolean _disposed;
 
-        //Task<TDomainModel> GetAsync(Guid id);
+        public DbContextRepository(TContext dbContext)
+        {
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        }
 
-        //Task AddAsync(TDomainModel domainModel);
+        public async Task<IReadOnlyList<TEntity>> ListAsync(IQueryableSpecification<TEntity>? specification = null)
+        {
+            var query = _dbContext.Set<TEntity>() as IQueryable<TEntity>;
+            if (specification != null)
+            {
+                query = query.Where(specification.Predicate);
+            }
+            return await query.ToListAsync().ConfigureAwait(false);
+        }
 
-        //Task UpdateAsync(TDomainModel domainModel);
+        protected virtual void Dispose(Boolean disposing)
+        {
+            if (!_disposed)
+            {
+                //if (disposing)
+                //{
+                //}
 
-        //Task DeleteAsync(TDomainModel domainModel);
+                _disposed = true;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
     }
 }

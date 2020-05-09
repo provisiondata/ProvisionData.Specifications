@@ -31,7 +31,7 @@ namespace ProvisionData.Specifications
 
     public abstract class AbstractSpecification<TDomainModel> : IQueryableSpecification<TDomainModel>
     {
-        private Func<TDomainModel, Boolean> _isSatisfiedBy;
+        private Func<TDomainModel, Boolean>? _isSatisfiedBy;
 
         public abstract Expression<Func<TDomainModel, Boolean>> Predicate { get; }
 
