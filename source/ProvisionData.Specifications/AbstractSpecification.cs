@@ -25,62 +25,61 @@
 
 namespace ProvisionData.Specifications
 {
-    using System;
-    using System.Linq;
-    using System.Linq.Expressions;
+	using System;
+	using System.Linq;
+	using System.Linq.Expressions;
 
-    public abstract class AbstractSpecification<TDomainModel> : IQueryableSpecification<TDomainModel>
-    {
-        private Func<TDomainModel, Boolean>? _isSatisfiedBy;
+	public abstract class AbstractSpecification<TDomainModel> : IQueryableSpecification<TDomainModel>
+	{
+		private Func<TDomainModel, Boolean>? _isSatisfiedBy;
 
-        public abstract Expression<Func<TDomainModel, Boolean>> Predicate { get; }
+		public Expression<Func<TDomainModel, Boolean>> Predicate { get; protected set; }
 
-        public Boolean IsSatisfiedBy(TDomainModel entity)
-        {
-            if (_isSatisfiedBy is null)
-                _isSatisfiedBy = Predicate.Compile();
+		public AbstractSpecification(Expression<Func<TDomainModel, Boolean>> predicate)
+			=> Predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            return _isSatisfiedBy(entity);
-        }
+		public Boolean IsSatisfiedBy(TDomainModel entity)
+		{
+			if (_isSatisfiedBy is null)
+				_isSatisfiedBy = Predicate.Compile();
 
-        public static implicit operator Expression<Func<TDomainModel, Boolean>>(AbstractSpecification<TDomainModel> spec)
-            => spec.Predicate;
+			return _isSatisfiedBy(entity);
+		}
 
-        public static AbstractSpecification<TDomainModel> operator &(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right)
-            => CombineSpecification(left, right, Expression.AndAlso);
+		public static implicit operator Expression<Func<TDomainModel, Boolean>>(AbstractSpecification<TDomainModel> spec)
+			=> spec.Predicate;
 
-        public static AbstractSpecification<TDomainModel> operator |(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right)
-            => CombineSpecification(left, right, Expression.OrElse);
+		public static AbstractSpecification<TDomainModel> operator &(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right)
+			=> CombineSpecification(left, right, Expression.AndAlso);
 
-        public static AbstractSpecification<TDomainModel> operator !(AbstractSpecification<TDomainModel> spec)
-        {
-            var predicate = spec.Predicate;
-            var newExpr = Expression.Lambda<Func<TDomainModel, Boolean>>(Expression.Not(predicate.Body), predicate.Parameters[0]);
-            return new ConstructedSpecification<TDomainModel>(newExpr);
-        }
+		public static AbstractSpecification<TDomainModel> operator |(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right)
+			=> CombineSpecification(left, right, Expression.OrElse);
 
-        protected static AbstractSpecification<TDomainModel> CombineSpecification(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right, Func<Expression, Expression, BinaryExpression> combiner)
-        {
-            var lExpr = left.Predicate;
-            var rExpr = right.Predicate;
-            var param = Expression.Parameter(typeof(TDomainModel));
-            var combined = combiner.Invoke(
-                    new ReplaceParameterVisitor { { lExpr.Parameters.Single(), param } }.Visit(lExpr.Body),
-                    new ReplaceParameterVisitor { { rExpr.Parameters.Single(), param } }.Visit(rExpr.Body)
-                );
-            return new ConstructedSpecification<TDomainModel>(Expression.Lambda<Func<TDomainModel, Boolean>>(combined, param));
-        }
+		public static AbstractSpecification<TDomainModel> operator !(AbstractSpecification<TDomainModel> spec)
+		{
+			var predicate = spec.Predicate;
+			var newExpr = Expression.Lambda<Func<TDomainModel, Boolean>>(Expression.Not(predicate.Body), predicate.Parameters[0]);
+			return new ConstructedSpecification<TDomainModel>(newExpr);
+		}
 
-        protected class ConstructedSpecification<T> : AbstractSpecification<T>
-        {
-            private readonly Expression<Func<T, Boolean>> _expr;
+		protected static AbstractSpecification<TDomainModel> CombineSpecification(AbstractSpecification<TDomainModel> left, AbstractSpecification<TDomainModel> right, Func<Expression, Expression, BinaryExpression> combiner)
+		{
+			var lExpr = left.Predicate;
+			var rExpr = right.Predicate;
+			var param = Expression.Parameter(typeof(TDomainModel));
+			var combined = combiner.Invoke(
+					new ReplaceParameterVisitor { { lExpr.Parameters.Single(), param } }.Visit(lExpr.Body),
+					new ReplaceParameterVisitor { { rExpr.Parameters.Single(), param } }.Visit(rExpr.Body)
+				);
+			return new ConstructedSpecification<TDomainModel>(Expression.Lambda<Func<TDomainModel, Boolean>>(combined, param));
+		}
 
-            public ConstructedSpecification(Expression<Func<T, Boolean>> specificationExpression)
-            {
-                _expr = specificationExpression;
-            }
-
-            public override Expression<Func<T, Boolean>> Predicate => _expr;
-        }
-    }
+		protected class ConstructedSpecification<T> : AbstractSpecification<T>
+		{
+			public ConstructedSpecification(Expression<Func<T, Boolean>> specificationExpression)
+				: base(specificationExpression)
+			{
+			}
+		}
+	}
 }

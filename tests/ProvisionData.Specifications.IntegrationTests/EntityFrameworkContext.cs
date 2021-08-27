@@ -25,28 +25,29 @@
 
 namespace ProvisionData.Specifications.Internal
 {
-    using System.Diagnostics.CodeAnalysis;
-    using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore;
+	using System.Diagnostics.CodeAnalysis;
 
-    public sealed class EntityFrameworkContext : DbContext
-    {
-        public EntityFrameworkContext(DbContextOptions<EntityFrameworkContext> options)
-            : base(options)
-        {
-        }
+	public sealed class EntityFrameworkContext : DbContext
+	{
+		public EntityFrameworkContext(DbContextOptions<EntityFrameworkContext> options)
+			: base(options)
+		{
+			Database.EnsureCreated();
+		}
 
-        public DbSet<User> Users { get; set; }
+		public DbSet<User> Users { get; set; }
 
-        [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "<Pending>")]
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>().HasKey(x => x.Id).HasName("Id");
+		[SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "<Pending>")]
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<User>().HasKey(x => x.Id).HasName("Id");
 
-            using (var inMemoryRepository = new InMemoryRepository())
-            {
-                var users = inMemoryRepository.ListAsync().GetAwaiter().GetResult();
-                modelBuilder.Entity<User>(x => x.HasData(users));
-            }
-        }
-    }
+			using (var inMemoryRepository = new InMemoryRepository())
+			{
+				var users = inMemoryRepository.QueryAsync().GetAwaiter().GetResult();
+				modelBuilder.Entity<User>(x => x.HasData(users));
+			}
+		}
+	}
 }

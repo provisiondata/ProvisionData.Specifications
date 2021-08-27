@@ -25,67 +25,73 @@
 
 namespace ProvisionData.Specifications.Internal
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading.Tasks;
 
-    public sealed class InMemoryRepository : IRepository<User>
-    {
-        private readonly IDictionary<Guid, User> _users = new ConcurrentDictionary<Guid, User>();
+	public sealed class InMemoryRepository : IRepository<User>
+	{
+		private readonly IDictionary<Guid, User> _users = new ConcurrentDictionary<Guid, User>();
 
-        public InMemoryRepository()
-        {
-            AddInternal(Guid.NewGuid(), "Doug", new DateTime(1974, 10, 16), Gender.Male);
-            AddInternal(Guid.NewGuid(), "Charmaine", new DateTime(1975, 11, 11), Gender.Female);
-            AddInternal(Guid.NewGuid(), "Shyloh", new DateTime(2007, 10, 15), Gender.Male);
-            AddInternal(Guid.NewGuid(), "Piper", new DateTime(2008, 5, 19), Gender.Female);
-            AddInternal(Guid.NewGuid(), "Geordi", new DateTime(2011, 9, 14), Gender.Male);
-        }
+		public InMemoryRepository()
+		{
+			AddInternal(Guid.NewGuid(), "Doug", new DateTime(1974, 10, 16), Gender.Male);
+			AddInternal(Guid.NewGuid(), "Charmaine", new DateTime(1975, 11, 11), Gender.Female);
+			AddInternal(Guid.NewGuid(), "Shyloh", new DateTime(2007, 10, 15), Gender.Male);
+			AddInternal(Guid.NewGuid(), "Piper", new DateTime(2008, 5, 19), Gender.Female);
+			AddInternal(Guid.NewGuid(), "Geordi", new DateTime(2011, 9, 14), Gender.Male);
+		}
 
-        public Task AddAsync(User domainModel)
-        {
-            if (domainModel == null)
-                throw new ArgumentNullException(nameof(domainModel));
+		public Task AddAsync(User domainModel)
+		{
+			if (domainModel == null)
+				throw new ArgumentNullException(nameof(domainModel));
 
-            _users.Add(domainModel.Id, domainModel);
+			_users.Add(domainModel.Id, domainModel);
 
-            return Task.CompletedTask;
-        }
+			return Task.CompletedTask;
+		}
 
-        public Task DeleteAsync(User domainModel)
-        {
-            _users.Remove(domainModel.Id);
-            return Task.CompletedTask;
-        }
+		public Task DeleteAsync(User domainModel)
+		{
+			_users.Remove(domainModel.Id);
+			return Task.CompletedTask;
+		}
 
-        public void Dispose() { }
+		public void Dispose() { }
 
-        public Task<User> GetAsync(Guid id) => Task.FromResult(_users[id]);
+		public Task<User> GetAsync(Guid id) => Task.FromResult(_users[id]);
+		public Task<User> GetAsync(IQueryableSpecification<User> specification)
+		{
 
-        public Task<IReadOnlyList<User>> ListAsync(IQueryableSpecification<User> specification = null)
-        {
-            if (specification is null)
-            {
-                IReadOnlyList<User> v = _users.Values.ToList();
-                return Task.FromResult(v);
-            }
+			var result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).FirstOrDefault();
+			return Task.FromResult(result);
+		}
 
-            IReadOnlyList<User> result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).ToList();
-            return Task.FromResult(result);
-        }
+		public Task<IReadOnlyList<User>> QueryAsync(IQueryableSpecification<User> specification = null)
+		{
+			if (specification is null)
+			{
+				IReadOnlyList<User> v = _users.Values.ToList();
+				return Task.FromResult(v);
+			}
 
-        public Task UpdateAsync(User domainModel)
-        {
-            lock (_users)
-            {
-                return Task.Run(() => DeleteAsync(domainModel))
-                           .ContinueWith(_ => AddAsync(domainModel), TaskScheduler.Default);
-            }
-        }
+			IReadOnlyList<User> result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).ToList();
+			return Task.FromResult(result);
+		}
 
-        private void AddInternal(Guid uid, String name, DateTime dateOfBirth, Gender gender)
-            => _users.Add(uid, new User(uid, name, dateOfBirth, gender));
-    }
+		public Task UpdateAsync(User domainModel)
+		{
+			lock (_users)
+			{
+				return Task.Run(() => DeleteAsync(domainModel))
+						   .ContinueWith(_ => AddAsync(domainModel), TaskScheduler.Default);
+			}
+		}
+
+		private void AddInternal(Guid uid, String name, DateTime dateOfBirth, Gender gender)
+			=> _users.Add(uid, new User(uid, name, dateOfBirth, gender));
+	}
 }

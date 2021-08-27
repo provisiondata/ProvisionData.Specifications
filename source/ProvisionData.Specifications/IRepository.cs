@@ -25,21 +25,15 @@
 
 namespace ProvisionData.Specifications.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+	using System;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
 
-    public interface IRepository<TDomainModel> : IDisposable
-        where TDomainModel : class
-    {
-        Task<IReadOnlyList<TDomainModel>> ListAsync(IQueryableSpecification<TDomainModel>? specification = null);
+	public interface IRepository<TDomainModel> : IDisposable
+		where TDomainModel : class
+	{
+		Task<IReadOnlyList<TDomainModel>> QueryAsync(IQueryableSpecification<TDomainModel> specification);
 
-        //Task<TDomainModel> GetAsync(Guid id);
-
-        //Task AddAsync(TDomainModel domainModel);
-
-        //Task UpdateAsync(TDomainModel domainModel);
-
-        //Task DeleteAsync(TDomainModel domainModel);
-    }
+		Task<TDomainModel> GetAsync(IQueryableSpecification<TDomainModel> specification);
+	}
 }

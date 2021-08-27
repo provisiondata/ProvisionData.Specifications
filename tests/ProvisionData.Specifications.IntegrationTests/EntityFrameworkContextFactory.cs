@@ -25,19 +25,19 @@
 
 namespace ProvisionData.Specifications.Internal
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Design;
-    using System;
+	using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore.Design;
+	using System;
 
-    public class EntityFrameworkContextFactory : IDesignTimeDbContextFactory<EntityFrameworkContext>
-    {
-        public static String ConnectionString { get; set; } = "Server=localhost;Database=SpecificationsTest;Integrated Security=true;MultipleActiveResultSets=True;";
-        public EntityFrameworkContext CreateDbContext(String[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<EntityFrameworkContext>();
-            optionsBuilder.UseSqlServer(ConnectionString);
+	public class EntityFrameworkContextFactory : IDesignTimeDbContextFactory<EntityFrameworkContext>
+	{
+		public static String ConnectionString { get; set; } = "Server=localhost;Database=SpecificationsTest;Integrated Security=true;MultipleActiveResultSets=True;";
+		public EntityFrameworkContext CreateDbContext(String[] args)
+		{
+			var optionsBuilder = new DbContextOptionsBuilder<EntityFrameworkContext>();
+			optionsBuilder.UseSqlServer(ConnectionString);
 
-            return new EntityFrameworkContext(optionsBuilder.Options);
-        }
-    }
+			return new EntityFrameworkContext(optionsBuilder.Options);
+		}
+	}
 }

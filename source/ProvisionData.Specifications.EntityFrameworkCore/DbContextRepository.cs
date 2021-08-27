@@ -25,48 +25,58 @@
 
 namespace ProvisionData.Specifications.EntityFrameworkCore
 {
-    using Microsoft.EntityFrameworkCore;
-    using ProvisionData.Specifications;
-    using ProvisionData.Specifications.Internal;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+	using Microsoft.EntityFrameworkCore;
+	using ProvisionData.Specifications;
+	using ProvisionData.Specifications.Internal;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading.Tasks;
 
-    public class DbContextRepository<TEntity, TContext> : IRepository<TEntity>
-        where TEntity : class
-        where TContext : DbContext
-    {
-        private readonly TContext _dbContext;
-        private Boolean _disposed;
+	public class DbContextRepository<TEntity, TContext> : IRepository<TEntity>
+		where TEntity : class
+		where TContext : DbContext
+	{
+		private readonly TContext _dbContext;
+		private Boolean _disposed;
 
-        public DbContextRepository(TContext dbContext)
-        {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        }
+		public DbContextRepository(TContext dbContext)
+		{
+			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+		}
 
-        public async Task<IReadOnlyList<TEntity>> ListAsync(IQueryableSpecification<TEntity>? specification = null)
-        {
-            var query = _dbContext.Set<TEntity>() as IQueryable<TEntity>;
-            if (specification != null)
-            {
-                query = query.Where(specification.Predicate);
-            }
-            return await query.ToListAsync().ConfigureAwait(false);
-        }
+		public async Task<IReadOnlyList<TEntity>> QueryAsync(IQueryableSpecification<TEntity> specification)
+		{
+			var query = _dbContext.Set<TEntity>().AsNoTracking();
+			if (specification != null)
+			{
+				query = query.Where(specification.Predicate);
+			}
+			return await query.ToListAsync();
+		}
 
-        protected virtual void Dispose(Boolean disposing)
-        {
-            if (!_disposed)
-            {
-                //if (disposing)
-                //{
-                //}
+		public async Task<TEntity> GetAsync(IQueryableSpecification<TEntity> specification)
+		{
+			var query = _dbContext.Set<TEntity>() as IQueryable<TEntity>;
+			if (specification != null)
+			{
+				query = query.Where(specification.Predicate);
+			}
+			return await query.SingleOrDefaultAsync();
+		}
 
-                _disposed = true;
-            }
-        }
+		protected virtual void Dispose(Boolean disposing)
+		{
+			if (!_disposed)
+			{
+				//if (disposing)
+				//{
+				//}
 
-        public void Dispose() => Dispose(true);
-    }
+				_disposed = true;
+			}
+		}
+
+		public void Dispose() => Dispose(true);
+	}
 }

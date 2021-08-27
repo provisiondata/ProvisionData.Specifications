@@ -25,16 +25,8 @@
 
 namespace ProvisionData.Specifications.Internal
 {
-    using System;
-    using System.Linq.Expressions;
-
-    public class UserHasGender : AbstractSpecification<User>
-    {
-        public UserHasGender(Gender gender) => Gender = gender;
-
-        public Gender Gender { get; }
-
-        public override Expression<Func<User, Boolean>> Predicate
-            => user => (Gender & user.Gender) != 0;
-    }
+	public class UserHasGender : AbstractSpecification<User>
+	{
+		public UserHasGender(Gender gender) : base(user => (gender & user.Gender) != 0) { }
+	}
 }

@@ -25,10 +25,12 @@
 
 namespace ProvisionData.Specifications.IntegrationTests
 {
-    using ProvisionData.Specifications.Internal;
+	using ProvisionData.Specifications.EntityFrameworkCore;
+	using ProvisionData.Specifications.Internal;
 
-    public class EntityFrameworkTests : RepositoryTests
-    {
-        public override IRepository<User> GetRepository() => new EntityFrameworkRepository();
-    }
+	public class EntityFrameworkTests : RepositoryTests
+	{
+		public override IRepository<User> GetRepository()
+			=> new DbContextRepository<User, EntityFrameworkContext>(new EntityFrameworkContextFactory().CreateDbContext(null));
+	}
 }
