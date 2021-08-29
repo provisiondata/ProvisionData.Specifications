@@ -1,37 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>ProvisionData.Specifications</RootNamespace>
-    <AssemblyName>ProvisionData.Specifications.IntegrationTests</AssemblyName>
-    <IsPackable>false</IsPackable>
+	<TargetFramework>net5.0</TargetFramework>
+	<RootNamespace>ProvisionData.Specifications</RootNamespace>
+	<AssemblyName>ProvisionData.Specifications.IntegrationTests</AssemblyName>
+	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\ProvisionData.Specifications.EntityFrameworkCore\ProvisionData.Specifications.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\..\source\ProvisionData.Specifications\ProvisionData.Specifications.csproj" />
-    <ProjectReference Include="..\ProvisionData.Common.UnitTests\ProvisionData.Common.UnitTests.csproj" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.3.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Update="xunit.runner.visualstudio" Version="2.4.3">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+	<ProjectReference Include="..\..\source\ProvisionData.Specifications.EntityFrameworkCore\ProvisionData.Specifications.EntityFrameworkCore.csproj" />
+	<ProjectReference Include="..\..\source\ProvisionData.Specifications\ProvisionData.Specifications.csproj" />
+	<ProjectReference Include="..\ProvisionData.Common.UnitTests\ProvisionData.Common.UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

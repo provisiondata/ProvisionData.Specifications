@@ -25,18 +25,12 @@
 
 namespace ProvisionData.Specifications
 {
-    using System;
-    using System.Linq.Expressions;
+	using System;
 
-    // https://fabiomarreco.github.io/blog/2018/specificationpattern-with-entityframework/
+	// https://fabiomarreco.github.io/blog/2018/specificationpattern-with-entityframework/
 
-    public interface ISpecification<T>
-    {
-        Boolean IsSatisfiedBy(T entity);
-    }
-
-    public interface IQueryableSpecification<T> : ISpecification<T>
-    {
-        Expression<Func<T, Boolean>> Predicate { get; }
-    }
+	public interface ISpecification<TEntity>
+	{
+		Boolean IsSatisfiedBy(TEntity entity);
+	}
 }

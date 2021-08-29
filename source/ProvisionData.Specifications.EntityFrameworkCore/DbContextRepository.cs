@@ -52,6 +52,25 @@ namespace ProvisionData.Specifications.EntityFrameworkCore
 			{
 				query = query.Where(specification.Predicate);
 			}
+
+			if (specification is IPagedSpecification<TEntity> paged)
+			{
+				if (paged.Skip >= 0)
+				{
+					query = query.Skip(paged.Skip.Value);
+				}
+
+				if (paged.Take > 0)
+				{
+					query = query.Take(paged.Take.Value);
+				}
+
+				if (paged.SortOrder.Count > 0)
+				{
+					query = query.SortBy(paged.SortOrder);
+				}
+			}
+
 			return await query.ToListAsync();
 		}
 
