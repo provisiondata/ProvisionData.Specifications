@@ -46,6 +46,8 @@ namespace ProvisionData.Specifications
 			return _isSatisfiedBy(entity);
 		}
 
+		public override String ToString() => GetType().Name;
+
 		public static implicit operator Expression<Func<TDomainModel, Boolean>>(AbstractSpecification<TDomainModel> spec)
 			=> spec.Predicate;
 
