@@ -45,7 +45,7 @@ namespace ProvisionData.Specifications.EntityFrameworkCore
 			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 		}
 
-		public async Task<IReadOnlyList<TEntity>> QueryAsync(IQueryableSpecification<TEntity> specification)
+		public async Task<IReadOnlyCollection<TEntity>> QueryAsync(IQueryableSpecification<TEntity> specification)
 		{
 			var query = _dbContext.Set<TEntity>().AsNoTracking();
 			if (specification != null)

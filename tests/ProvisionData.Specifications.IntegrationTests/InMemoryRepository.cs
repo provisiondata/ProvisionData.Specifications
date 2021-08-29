@@ -70,15 +70,15 @@ namespace ProvisionData.Specifications.Internal
 			return Task.FromResult(result);
 		}
 
-		public Task<IReadOnlyList<User>> QueryAsync(IQueryableSpecification<User> specification = null)
+		public Task<IReadOnlyCollection<User>> QueryAsync(IQueryableSpecification<User> specification = null)
 		{
 			if (specification is null)
 			{
-				IReadOnlyList<User> v = _users.Values.ToList();
+				IReadOnlyCollection<User> v = _users.Values.ToList();
 				return Task.FromResult(v);
 			}
 
-			IReadOnlyList<User> result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).ToList();
+			IReadOnlyCollection<User> result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).ToList();
 			return Task.FromResult(result);
 		}
 

@@ -32,7 +32,7 @@ namespace ProvisionData.Specifications.Internal
 	public interface IRepository<TDomainModel> : IDisposable
 		where TDomainModel : class
 	{
-		Task<IReadOnlyList<TDomainModel>> QueryAsync(IQueryableSpecification<TDomainModel> specification);
+		Task<IReadOnlyCollection<TDomainModel>> QueryAsync(IQueryableSpecification<TDomainModel> specification);
 
 		Task<TDomainModel> GetAsync(IQueryableSpecification<TDomainModel> specification);
 	}
