@@ -29,11 +29,11 @@ namespace ProvisionData.Specifications.Internal
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 
-	public interface IRepository<TDomainModel> : IDisposable
+	public interface IReadOnlyRepository<TDomainModel> : IDisposable
 		where TDomainModel : class
 	{
-		Task<IReadOnlyCollection<TDomainModel>> QueryAsync(IQueryableSpecification<TDomainModel> specification);
+		Task<IReadOnlyCollection<TDomainModel>> QueryAsync(IQuerySpecification<TDomainModel> specification);
 
-		Task<TDomainModel> GetAsync(IQueryableSpecification<TDomainModel> specification);
+		Task<TDomainModel> GetAsync(IQuerySpecification<TDomainModel> specification);
 	}
 }

@@ -31,7 +31,7 @@ namespace ProvisionData.Specifications.Internal
 	using System.Linq;
 	using System.Threading.Tasks;
 
-	public sealed class InMemoryRepository : IRepository<User>
+	public sealed class InMemoryRepository : IReadOnlyRepository<User>
 	{
 		private readonly IDictionary<Guid, User> _users = new ConcurrentDictionary<Guid, User>();
 
@@ -63,14 +63,14 @@ namespace ProvisionData.Specifications.Internal
 		public void Dispose() { }
 
 		public Task<User> GetAsync(Guid id) => Task.FromResult(_users[id]);
-		public Task<User> GetAsync(IQueryableSpecification<User> specification)
+		public Task<User> GetAsync(IQuerySpecification<User> specification)
 		{
 
 			var result = _users.Values.Where(x => specification.IsSatisfiedBy(x)).FirstOrDefault();
 			return Task.FromResult(result);
 		}
 
-		public Task<IReadOnlyCollection<User>> QueryAsync(IQueryableSpecification<User> specification = null)
+		public Task<IReadOnlyCollection<User>> QueryAsync(IQuerySpecification<User> specification = null)
 		{
 			if (specification is null)
 			{

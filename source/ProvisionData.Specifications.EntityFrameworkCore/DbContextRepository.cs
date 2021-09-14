@@ -33,7 +33,7 @@ namespace ProvisionData.Specifications.EntityFrameworkCore
 	using System.Linq;
 	using System.Threading.Tasks;
 
-	public class DbContextRepository<TEntity, TContext> : IRepository<TEntity>
+	public class DbContextRepository<TEntity, TContext> : IReadOnlyRepository<TEntity>
 		where TEntity : class
 		where TContext : DbContext
 	{
@@ -45,7 +45,7 @@ namespace ProvisionData.Specifications.EntityFrameworkCore
 			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 		}
 
-		public async Task<IReadOnlyCollection<TEntity>> QueryAsync(IQueryableSpecification<TEntity> specification)
+		public async Task<IReadOnlyCollection<TEntity>> QueryAsync(IQuerySpecification<TEntity> specification)
 		{
 			var query = _dbContext.Set<TEntity>().AsNoTracking();
 			if (specification != null)
@@ -74,7 +74,7 @@ namespace ProvisionData.Specifications.EntityFrameworkCore
 			return await query.ToListAsync();
 		}
 
-		public async Task<TEntity> GetAsync(IQueryableSpecification<TEntity> specification)
+		public async Task<TEntity> GetAsync(IQuerySpecification<TEntity> specification)
 		{
 			var query = _dbContext.Set<TEntity>() as IQueryable<TEntity>;
 			if (specification != null)

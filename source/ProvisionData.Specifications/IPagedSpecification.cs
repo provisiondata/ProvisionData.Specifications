@@ -28,7 +28,7 @@ namespace ProvisionData.Specifications
 	using System;
 	using System.Collections.Generic;
 
-	public interface IPagedSpecification<TEntity> : IQueryableSpecification<TEntity>
+	public interface IPagedSpecification<TEntity> : IQuerySpecification<TEntity>
 	{
 		Int32? Skip { get; }
 		Int32? Take { get; }

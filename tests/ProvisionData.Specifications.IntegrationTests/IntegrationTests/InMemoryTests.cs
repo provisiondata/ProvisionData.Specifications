@@ -29,6 +29,6 @@ namespace ProvisionData.Specifications.IntegrationTests
 
     public class InMemoryTests : RepositoryTests
     {
-        public override IRepository<User> GetRepository() => new InMemoryRepository();
+        public override IReadOnlyRepository<User> GetRepository() => new InMemoryRepository();
     }
 }

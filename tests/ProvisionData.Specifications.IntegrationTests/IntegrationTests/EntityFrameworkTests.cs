@@ -30,7 +30,7 @@ namespace ProvisionData.Specifications.IntegrationTests
 
 	public class EntityFrameworkTests : RepositoryTests
 	{
-		public override IRepository<User> GetRepository()
+		public override IReadOnlyRepository<User> GetRepository()
 			=> new DbContextRepository<User, EntityFrameworkContext>(new EntityFrameworkContextFactory().CreateDbContext(null));
 	}
 }

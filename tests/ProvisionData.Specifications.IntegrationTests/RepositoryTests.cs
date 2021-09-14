@@ -33,7 +33,7 @@ namespace ProvisionData.Specifications.IntegrationTests
 
 	public abstract class RepositoryTests
 	{
-		public abstract IRepository<User> GetRepository();
+		public abstract IReadOnlyRepository<User> GetRepository();
 
 		[Fact]
 		public async Task And()

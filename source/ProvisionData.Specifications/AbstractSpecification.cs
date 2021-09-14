@@ -29,11 +29,14 @@ namespace ProvisionData.Specifications
 	using System.Linq;
 	using System.Linq.Expressions;
 
-	public abstract class AbstractSpecification<TDomainModel> : IQueryableSpecification<TDomainModel>
+	public abstract class AbstractSpecification<TDomainModel> : IQuerySpecification<TDomainModel>
 	{
 		private Func<TDomainModel, Boolean>? _isSatisfiedBy;
 
 		public Expression<Func<TDomainModel, Boolean>> Predicate { get; protected set; }
+
+		public AbstractSpecification(IQuerySpecification<TDomainModel> specification)
+			: this(specification.Predicate) { }
 
 		public AbstractSpecification(Expression<Func<TDomainModel, Boolean>> predicate)
 			=> Predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));

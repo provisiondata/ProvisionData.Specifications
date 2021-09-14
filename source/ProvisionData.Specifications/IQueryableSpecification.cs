@@ -28,7 +28,8 @@ namespace ProvisionData.Specifications
 	using System;
 	using System.Linq.Expressions;
 
-	public interface IQueryableSpecification<TEntity> : ISpecification<TEntity>
+	public interface IQuerySpecification
+		<TEntity> : ISpecification<TEntity>
 	{
 		Expression<Func<TEntity, Boolean>> Predicate { get; }
 	}
