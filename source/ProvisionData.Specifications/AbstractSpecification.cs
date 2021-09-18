@@ -28,28 +28,39 @@ namespace ProvisionData.Specifications
 	using System;
 	using System.Linq;
 	using System.Linq.Expressions;
-	using System.Text.Json;
 	using System.Text.Json.Serialization;
 
 	public abstract class AbstractSpecification<TDomainModel> : IQuerySpecification<TDomainModel>
 	{
 		private Func<TDomainModel, Boolean>? _isSatisfiedBy;
 
-		[JsonIgnore]
-		public Expression<Func<TDomainModel, Boolean>> Predicate { get; protected set; }
+		/// <summary>
+		/// Inheritors may choose to not supply a Specification or Predicate, but instead set the <see cref="Predicate"/> property directly. If the Predicate is not set, <see cref="IsSatisfiedBy(TDomainModel)"/> will always return <see langword="false"/>.
+		/// </summary>
+		protected AbstractSpecification() { Predicate = null!; }
 
 		public AbstractSpecification(IQuerySpecification<TDomainModel> specification)
-			: this(specification.Predicate) { }
+			: this(specification?.Predicate ?? throw new InvalidOperationException("Must supply a Specification with a valid (not null) Predicate.")) { }
 
 		public AbstractSpecification(Expression<Func<TDomainModel, Boolean>> predicate)
 			=> Predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
+
+		/// <summary>
+		/// Pass this to <see cref="Queryable.Where{TSource}(IQueryable{TSource}, Expression{Func{TSource, Boolean}})"/> and other methods that accept a predicate.
+		/// </summary>
+		[JsonIgnore]
+		public Expression<Func<TDomainModel, Boolean>> Predicate { get; protected set; }
+
+		/// <summary>
+		/// Returns <see langword="true"/> if the <see cref="Predicate"/> matches <typeparamref name="TDomainModel"/>; otherwise <see langword="false"/>. If the Predicate is <see langword="null"/>, <see cref="IsSatisfiedBy(TDomainModel)"/> will always return <see langword="false"/>.
+		/// </summary>
 		public Boolean IsSatisfiedBy(TDomainModel entity)
 		{
 			if (_isSatisfiedBy is null)
-				_isSatisfiedBy = Predicate.Compile();
+				_isSatisfiedBy = Predicate?.Compile();
 
-			return _isSatisfiedBy(entity);
+			return _isSatisfiedBy is not null && _isSatisfiedBy(entity);
 		}
 
 		public override String ToString() => GetType().Name;
