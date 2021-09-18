@@ -28,11 +28,14 @@ namespace ProvisionData.Specifications
 	using System;
 	using System.Linq;
 	using System.Linq.Expressions;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 
 	public abstract class AbstractSpecification<TDomainModel> : IQuerySpecification<TDomainModel>
 	{
 		private Func<TDomainModel, Boolean>? _isSatisfiedBy;
 
+		[JsonIgnore]
 		public Expression<Func<TDomainModel, Boolean>> Predicate { get; protected set; }
 
 		public AbstractSpecification(IQuerySpecification<TDomainModel> specification)
