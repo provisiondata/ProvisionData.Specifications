@@ -1,12 +1,12 @@
 ﻿/*******************************************************************************
  * MIT License
  *
- * Copyright 2020 Provision Data Systems Inc.  https://provisiondata.com
+ * Copyright 2021 Provision Data Systems Inc.  https://provisiondata.com
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a 
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * the rights to use, copy, modify, merge, publish, distribute, sub-license,
  * and/or sell copies of the Software, and to permit persons to whom the 
  * Software is furnished to do so, subject to the following conditions:
  *
@@ -25,23 +25,23 @@
 
 namespace ProvisionData.Specifications
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Linq.Expressions;
 
-    internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
-    {
-        private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new Dictionary<ParameterExpression, ParameterExpression>();
+	internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
+	{
+		private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new();
 
-        protected override Expression VisitParameter(ParameterExpression node)
-            => _map.TryGetValue(node, out var newValue) ? newValue : node;
+		protected override Expression VisitParameter(ParameterExpression node)
+			=> _map.TryGetValue(node, out var newValue) ? newValue : node;
 
-        public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
-            => _map.Add(parameterToReplace, replaceWith);
+		public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
+			=> _map.Add(parameterToReplace, replaceWith);
 
-        public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
-            => _map.GetEnumerator();
+		public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
+			=> _map.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	}
 }
