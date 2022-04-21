@@ -23,54 +23,53 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+
+namespace ProvisionData.Specifications;
+
+public static class QueryableExtensions
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Linq.Expressions;
+	const String OrderBy = "OrderBy";
+	const String ThenBy = "ThenBy";
+	const String OrderByDesc = "OrderByDescending";
+	const String ThenByDesc = "ThenByDescending";
 
-	public static class QueryableExtensions
+	public static IQueryable<T> SortBy<T>(this IQueryable<T> source, IEnumerable<SortBy> sortModels)
 	{
-		const String OrderBy = "OrderBy";
-		const String ThenBy = "ThenBy";
-		const String OrderByDesc = "OrderByDescending";
-		const String ThenByDesc = "ThenByDescending";
-
-		public static IQueryable<T> SortBy<T>(this IQueryable<T> source, IEnumerable<SortBy> sortModels)
+		var expression = source.Expression;
+		Int32 count = 0;
+		foreach (var item in sortModels)
 		{
-			var expression = source.Expression;
-			Int32 count = 0;
-			foreach (var item in sortModels)
+			try
 			{
-				try
-				{
-					if (String.IsNullOrWhiteSpace(item.PropertyName))
-						continue;
+				if (String.IsNullOrWhiteSpace(item.PropertyName))
+					continue;
 
-					var parameter = Expression.Parameter(typeof(T), "x");
-					var selector = Expression.PropertyOrField(parameter, item.PropertyName);
-					var method = item.Descending ?
-						(count == 0 ? OrderByDesc : ThenByDesc) :
-						(count == 0 ? OrderBy : ThenBy);
-					expression = Expression.Call(typeof(Queryable), method,
-						new Type[] { source.ElementType, selector.Type }, expression,
-						Expression.Quote(Expression.Lambda(selector, parameter)));
-					count++;
-				}
-				catch (ArgumentException)
-				{
-					// Likely thrown by the call to Expression.PropertyOrField(parameter, item.PropertyName)
-					// ArgumentNullException => expression or propertyOrFieldName is null.
-					// ArgumentException => No property or field named propertyOrFieldName is defined in
-					// expression.Type or its base types.
-
-					// Either way, it's safe to ignore. Hopefully the developer will realize their mistake
-					// but lets not make life hard for them by throwing an exception from this deep in
-					// their code.
-				}
+				var parameter = Expression.Parameter(typeof(T), "x");
+				var selector = Expression.PropertyOrField(parameter, item.PropertyName);
+				var method = item.Descending ?
+					(count == 0 ? OrderByDesc : ThenByDesc) :
+					(count == 0 ? OrderBy : ThenBy);
+				expression = Expression.Call(typeof(Queryable), method,
+					new Type[] { source.ElementType, selector.Type }, expression,
+					Expression.Quote(Expression.Lambda(selector, parameter)));
+				count++;
 			}
-			return count > 0 ? source.Provider.CreateQuery<T>(expression) : source;
+			catch (ArgumentException)
+			{
+				// Likely thrown by the call to Expression.PropertyOrField(parameter, item.PropertyName)
+				// ArgumentNullException => expression or propertyOrFieldName is null.
+				// ArgumentException => No property or field named propertyOrFieldName is defined in
+				// expression.Type or its base types.
+
+				// Either way, it's safe to ignore. Hopefully the developer will realize their mistake
+				// but lets not make life hard for them by throwing an exception from this deep in
+				// their code.
+			}
 		}
+
+		return count > 0 ? source.Provider.CreateQuery<T>(expression) : source;
 	}
 }

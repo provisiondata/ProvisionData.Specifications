@@ -23,23 +23,43 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
+namespace ProvisionData.Specifications;
+
+public class SpecificationEvaluator<TEntity> where TEntity : class
 {
-	using System;
-	using System.Linq.Expressions;
-
-	public sealed class QuerySpecification<T> : AbstractSpecification<T>
+	public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> query, IQuery<TEntity> spec)
 	{
-		public QuerySpecification()
+		if (spec.Predicate != null)
 		{
+			query = query.Where(spec.Predicate);
 		}
 
-		public QuerySpecification(IQuerySpecification<T> specification) : base(specification)
+		query = spec.Includes.Aggregate(query, (c, i) => c.Include(i));
+
+		if (spec.OrderBy != null)
 		{
+			query = query.OrderBy(spec.OrderBy);
+		}
+		else if (spec.OrderByDescending != null)
+		{
+			query = query.OrderByDescending(spec.OrderByDescending);
 		}
 
-		public QuerySpecification(Expression<Func<T, Boolean>> predicate) : base(predicate)
+		if (spec.GroupBy != null)
 		{
+			query = query.GroupBy(spec.GroupBy).SelectMany(x => x);
 		}
+
+		// Apply paging if enabled
+		if (spec.IsPagingEnabled)
+		{
+			query = query.Skip(spec.Skip)
+						 .Take(spec.Take);
+		}
+
+		return query;
 	}
 }

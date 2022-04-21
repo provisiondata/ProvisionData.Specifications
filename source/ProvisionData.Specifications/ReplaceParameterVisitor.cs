@@ -23,25 +23,24 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+
+namespace ProvisionData.Specifications;
+
+internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
 {
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Linq.Expressions;
+	private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new();
 
-	internal class ReplaceParameterVisitor : ExpressionVisitor, IEnumerable<KeyValuePair<ParameterExpression, ParameterExpression>>
-	{
-		private readonly Dictionary<ParameterExpression, ParameterExpression> _map = new();
+	protected override Expression VisitParameter(ParameterExpression node)
+		=> _map.TryGetValue(node, out var newValue) ? newValue : node;
 
-		protected override Expression VisitParameter(ParameterExpression node)
-			=> _map.TryGetValue(node, out var newValue) ? newValue : node;
+	public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
+		=> _map.Add(parameterToReplace, replaceWith);
 
-		public void Add(ParameterExpression parameterToReplace, ParameterExpression replaceWith)
-			=> _map.Add(parameterToReplace, replaceWith);
+	public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
+		=> _map.GetEnumerator();
 
-		public IEnumerator<KeyValuePair<ParameterExpression, ParameterExpression>> GetEnumerator()
-			=> _map.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

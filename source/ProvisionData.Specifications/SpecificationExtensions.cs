@@ -23,12 +23,13 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
-{
-    public static class SpecificationExtensions
-    {
-        public static AbstractSpecification<T> And<T>(this AbstractSpecification<T> left, AbstractSpecification<T> right) => left & right;
+namespace ProvisionData.Specifications;
 
-        public static AbstractSpecification<T> Or<T>(this AbstractSpecification<T> left, AbstractSpecification<T> right) => left | right;
-    }
+public static class SpecificationExtensions
+{
+	public static Specification<T> And<T>(this Specification<T> left, Specification<T> right) => left & right;
+
+	public static Specification<T> Or<T>(this Specification<T> left, Specification<T> right) => left | right;
+
+	public static Specification<T> Not<T>(this Specification<T> left, Specification<T> right) => !right;
 }

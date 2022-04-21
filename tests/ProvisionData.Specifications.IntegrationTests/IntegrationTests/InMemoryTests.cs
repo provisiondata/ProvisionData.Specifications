@@ -23,12 +23,11 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications.IntegrationTests
-{
-    using ProvisionData.Specifications.Internal;
+using ProvisionData.Specifications.Internal;
 
-    public class InMemoryTests : RepositoryTests
-    {
-        public override IReadOnlyRepository<User> GetRepository() => new InMemoryRepository();
-    }
+namespace ProvisionData.Specifications.IntegrationTests;
+
+public class InMemoryTests : RepositoryTests
+{
+	public override IRepository<Person> GetRepository() => new InMemoryRepository();
 }

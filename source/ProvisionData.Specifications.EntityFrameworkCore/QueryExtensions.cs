@@ -25,14 +25,14 @@
 
 namespace ProvisionData.Specifications;
 
-public sealed class SortBy
+public static class QueryExtensions
 {
-	public SortBy(String propertyName, Boolean descending = false)
-	{
-		PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
-		Descending = descending;
-	}
+	public static Query<T> And<T>(this Query<T> left, Query<T> right) where T : class
+		=> left & right;
 
-	public String PropertyName { get; }
-	public Boolean Descending { get; }
+	public static Query<T> Or<T>(this Query<T> left, Query<T> right) where T : class
+		=> left | right;
+
+	public static Query<T> Not<T>(this Query<T> left, Query<T> right) where T : class
+		=> !right;
 }

@@ -23,66 +23,113 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications.IntegrationTests
+using FluentAssertions;
+using ProvisionData.Specifications.Internal;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace ProvisionData.Specifications.IntegrationTests;
+
+public abstract class RepositoryTests : IDisposable
 {
-	using FluentAssertions;
-	using ProvisionData.Specifications.Internal;
-	using System.Threading.Tasks;
-	using Xunit;
+	private Boolean _disposed;
 
-	public abstract class RepositoryTests
+	public abstract IRepository<Person> GetRepository();
+
+	[Fact]
+	public async Task And()
 	{
-		public abstract IReadOnlyRepository<User> GetRepository();
-
-		[Fact]
-		public async Task And()
+		using (var repo = GetRepository())
 		{
-			using (var repo = GetRepository())
-			{
-				var spec = new UserIsAgeOfMajority(18).And(new UserHasGender(Gender.Male));
+			var spec = new UserIsAgeOfMajority(18).And(new UserHasGender(Gender.Male));
 
-				(await repo.QueryAsync(spec).ConfigureAwait(false)).Count.Should().Be(1);
-			}
+			Int32 count = await FetchAsync(repo, spec);
+			count.Should().Be(1);
 		}
+	}
 
-		[Fact]
-		public async Task Not()
+	[Fact]
+	public async Task Not()
+	{
+		using (var repo = GetRepository())
 		{
-			using (var repo = GetRepository())
-			{
-				var spec = !new UserIsAgeOfMajority(18);
+			var spec = !new UserIsAgeOfMajority(18);
 
-				(await repo.QueryAsync(spec).ConfigureAwait(false)).Count.Should().Be(3);
-			}
+			Int32 count = await FetchAsync(repo, spec);
+			count.Should().Be(3);
 		}
+	}
 
-		[Fact]
-		public async Task Or()
+	[Fact]
+	public async Task Or()
+	{
+		using (var repo = GetRepository())
 		{
-			using (var repo = GetRepository())
-			{
-				var spec = new UserIsAgeOfMajority(18).Or(new UserHasGender(Gender.Male));
+			var spec = new UserIsAgeOfMajority(18).Or(new UserHasGender(Gender.Male));
 
-				(await repo.QueryAsync(spec).ConfigureAwait(false)).Count.Should().Be(4);
-			}
+			Int32 count = await FetchAsync(repo, spec);
+			count.Should().Be(4);
 		}
+	}
 
-		[Fact]
-		public async Task UserIsAgeOfMajority()
+	[Fact]
+	public async Task UserIsAgeOfMajority()
+	{
+		using (var repo = GetRepository())
 		{
-			using (var repo = GetRepository())
-			{
-				(await repo.QueryAsync(new UserIsAgeOfMajority(18)).ConfigureAwait(false)).Count.Should().Be(2);
-			}
-		}
+			var spec = new UserIsAgeOfMajority(18);
 
-		[Fact]
-		public async Task UserHasGender()
-		{
-			using (var repo = GetRepository())
-			{
-				(await repo.QueryAsync(new UserHasGender(Gender.Female)).ConfigureAwait(false)).Count.Should().Be(2);
-			}
+			Int32 count = await FetchAsync(repo, spec);
+			count.Should().Be(2);
 		}
+	}
+
+	[Fact]
+	public async Task UserHasGender()
+	{
+		using (var repo = GetRepository())
+		{
+			var spec = new UserHasGender(Gender.Female);
+
+			Int32 count = await FetchAsync(repo, spec);
+			count.Should().Be(2);
+		}
+	}
+
+	private static async Task<Int32> FetchAsync(IRepository<Person> repo, Query<Person> spec)
+	{
+		var count = 0;
+		await foreach (var user in repo.FindAsync(spec))
+			count++;
+		return count;
+	}
+
+	protected virtual void Dispose(Boolean disposing)
+	{
+		if (!_disposed)
+		{
+			if (disposing)
+			{
+				// TODO: dispose managed state (managed objects)
+			}
+
+			// TODO: free unmanaged resources (unmanaged objects) and override finalizer
+			// TODO: set large fields to null
+			_disposed = true;
+		}
+	}
+
+	// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+	// ~RepositoryTests()
+	// {
+	//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+	//     Dispose(disposing: false);
+	// }
+
+	public void Dispose()
+	{
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
 	}
 }

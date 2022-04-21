@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;net48</TargetFrameworks>
+		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>ProvisionData.Specifications</RootNamespace>
 		<AssemblyName>ProvisionData.Specifications</AssemblyName>
 		<Title>Provision Data</Title>
@@ -20,8 +20,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
-		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
 		<DebugType>full</DebugType>
 		<IsPackable>true</IsPackable>
 
@@ -39,23 +39,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\pdsi.png" Pack="true" PackagePath="\"/>
+		<None Include="..\..\pdsi.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="5.0.2" />
+		<PackageReference Include="System.Text.Json" Version="6.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GitVersion.MsBuild" Version="5.7.0">
+		<PackageReference Include="GitVersion.MsBuild" Version="5.10.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.10.56">
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.1.46">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

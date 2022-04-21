@@ -23,53 +23,19 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.UnitTests.Specifications
+using System.Linq.Expressions;
+
+namespace ProvisionData.Specifications;
+
+public interface IQuery<TEntity> : ISpecification<TEntity> where TEntity : class
 {
-	using FluentAssertions;
-	using ProvisionData.Specifications;
-	using System;
-	using Xunit;
+	Expression<Func<TEntity, Boolean>> Predicate { get; }
+	List<Expression<Func<TEntity, Object>>> Includes { get; }
+	Expression<Func<TEntity, Object>>? OrderBy { get; }
+	Expression<Func<TEntity, Object>>? OrderByDescending { get; }
+	Expression<Func<TEntity, Object>>? GroupBy { get; }
 
-	public class Specifications
-	{
-		[Fact]
-		public void Behaves_appropriately_when_Specification_is_null()
-		{
-			var spec = new QuerySpecification<String>();
-			spec.IsSatisfiedBy(null).Should().BeFalse();
-			spec.IsSatisfiedBy(String.Empty).Should().BeFalse();
-			spec.IsSatisfiedBy("Something").Should().BeFalse();
-		}
-
-		[Fact]
-		public void Throws_when_constructed_with_null_parameters()
-		{
-			Assert.Throws<InvalidOperationException>(() => new QuerySpecification<String>((IQuerySpecification<String>)null));
-		}
-
-		internal class IsEven : AbstractSpecification<Int32>
-		{
-			public IsEven() : base(n => (n % 2) == 0) { }
-		}
-
-		internal class IsMultiple : AbstractSpecification<Int32>
-		{
-			public IsMultiple(Int32 factor) : base(n => (n % factor) == 0) { }
-		}
-
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(5, false)]
-		[InlineData(9, false)]
-		[InlineData(10, true)]
-		[InlineData(11, false)]
-		[InlineData(15, false)]
-		[InlineData(20, true)]
-		public void Can_be_combined(Int32 input, Boolean expected)
-		{
-			ISpecification<Int32> isTen = new IsEven().And(new IsMultiple(5));
-
-			isTen.IsSatisfiedBy(input).Should().Be(expected);
-		}
-	}
+	Int32 Take { get; }
+	Int32 Skip { get; }
+	Boolean IsPagingEnabled { get; }
 }

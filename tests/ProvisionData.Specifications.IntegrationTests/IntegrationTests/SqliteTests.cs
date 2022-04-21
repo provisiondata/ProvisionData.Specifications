@@ -23,15 +23,28 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
-{
-	using System;
-	using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using ProvisionData.Specifications.EntityFrameworkCore;
+using ProvisionData.Specifications.Internal;
 
-	public interface IPagedSpecification<TEntity> : IQuerySpecification<TEntity>
+namespace ProvisionData.Specifications.IntegrationTests;
+
+public class SqliteTests : RepositoryTests, IDisposable
+{
+	private readonly SqliteConnection _connection = new("Filename=:memory:");
+
+	public override IRepository<Person> GetRepository()
 	{
-		Int32? Skip { get; }
-		Int32? Take { get; }
-		IReadOnlyCollection<SortBy> SortOrder { get; }
+		_connection.Open();
+		return new Repository<Person>(new TestContext(new DbContextOptionsBuilder<TestContext>().UseSqlite(_connection).Options));
+	}
+
+	protected override void Dispose(Boolean disposing)
+	{
+		if (disposing)
+		{
+			_connection.Dispose();
+		}
 	}
 }

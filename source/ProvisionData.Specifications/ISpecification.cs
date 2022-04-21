@@ -23,14 +23,9 @@
  *
  *******************************************************************************/
 
-namespace ProvisionData.Specifications
+namespace ProvisionData.Specifications;
+
+public interface ISpecification<T>
 {
-	using System;
-
-	// https://fabiomarreco.github.io/blog/2018/specificationpattern-with-entityframework/
-
-	public interface ISpecification<TEntity>
-	{
-		Boolean IsSatisfiedBy(TEntity entity);
-	}
+	Boolean IsSatisfiedBy(T obj);
 }
